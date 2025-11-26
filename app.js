@@ -52,6 +52,14 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+  // log the error to the server console for debugging (include request info)
+  try {
+    console.error('Unhandled error on %s %s', req.method, req.originalUrl, err && err.stack ? '\n' + err.stack : err);
+  } catch (logErr) {
+    // if logging itself fails, still proceed to render the error page
+    console.error('Error while logging error:', logErr);
+  }
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

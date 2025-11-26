@@ -22,9 +22,9 @@ router.get('/register', function(req, res, next) {
 });
 
 // allow the register form to POST to /register (in addition to /auth/register)
-router.post('/register', authRoutes.registerMiddleware);
+router.post('/register', ...authRoutes.registerMiddleware);
 // allow the login form to POST to /login (in addition to /auth/login)
-router.post('/login', authRoutes.loginMiddleware);
+router.post('/login', ...authRoutes.loginMiddleware);
 
 router.get('/logout', function(req, res, next) {
   if (req.session) {

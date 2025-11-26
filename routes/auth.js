@@ -56,6 +56,7 @@ async function registerHandler(req, res, next) {
         req.flash('success', 'Registered successfully');
         res.redirect('/assessment');
     } catch (err) {
+        console.error('Register error:', err);
         if (err.code === '23505') {
             // unique violation
             req.flash('error', 'Username or email already exists');
@@ -101,6 +102,7 @@ async function loginHandler(req, res, next) {
         req.flash('success', 'Logged in successfully');
         res.redirect('/assessment');
     } catch (err) {
+        console.error('Login error:', err);
         next(err);
     }
 }
