@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Users</title>
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>Users</h3>
+    <% if (error && error.length) { error.forEach(m=>{ %>
+      <div class="alert alert-danger"><%= m %></div>
+    <% }) } %>
+    <% if (success && success.length) { success.forEach(m=>{ %>
+      <div class="alert alert-success"><%= m %></div>
+    <% }) } %>
+
+    <div class="mb-3 d-flex">
+      <form class="me-2" method="get" action="/users">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="search username or email" value="<%= q %>">
+          <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+      </form>
+      <a class="btn btn-primary ms-auto" href="/users/new">Create User</a>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><a href="?sort=username&order=<%= sort==='username' && order==='ASC' ? 'desc' : 'asc' %>">Username</a></th>
+          <th><a href="?sort=email&order=<%= sort==='email' && order==='ASC' ? 'desc' : 'asc' %>">Email</a></th>
+          <th><a href="?sort=created_at&order=<%= sort==='created_at' && order==='ASC' ? 'desc' : 'asc' %>">Created</a></th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(function(u){ %>
+            <tr>
+              <td><a href="/users/<%= u.id %>"><%= u.username %></a></td>
+              <td><%= u.email %></td>
+              <td><%= new Date(u.created_at).toLocaleString() %></td>
+              <td><%= u.role %></td>
+            <td>
+              <a class="btn btn-sm btn-secondary" href="/users/<%= u.id %>/edit">Edit</a>
+              <% if (currentUser && currentUser.role === 'admin' && u.role !== 'admin') { %>
+              <form style="display:inline" method="post" action="/users/<%= u.id %>/promote" onsubmit="return confirm('Promote this user to admin?');">
+                <button class="btn btn-sm btn-warning" type="submit">Promote</button>
+              </form>
+              <% } %>
+              <form style="display:inline" method="post" action="/users/<%= u.id %>/delete" onsubmit="return confirm('Delete user?');">
+                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <% const totalPages = Math.ceil(total / perPage) || 1; %>
+    <nav>
+      <ul class="pagination">
+        <% for (let p=1;p<=totalPages;p++) { %>
+          <li class="page-item <%= p===page ? 'active' : '' %>"><a class="page-link" href="?page=<%= p %>&perPage=<%= perPage %>&q=<%= encodeURIComponent(q) %>&sort=<%= sort %>&order=<%= order %>"><%= p %></a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</body>
+</html>

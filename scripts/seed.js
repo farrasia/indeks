@@ -25,6 +25,9 @@ async function main() {
   try {
     console.log('Running SQL init...');
     await runSqlFile(path.join(__dirname, '..', 'sql', 'init.sql'));
+    // assessment tables and data
+    console.log('Running assessment SQL...');
+    await runSqlFile(path.join(__dirname, '..', 'sql', 'assessment_init.sql'));
     console.log('Tables ensured.');
 
     const adminUser = process.env.ADMIN_USERNAME;
@@ -39,7 +42,7 @@ async function main() {
       } else {
         console.log('Creating admin user...');
         const hashed = hashPassword(adminPassword);
-        await db.query('INSERT INTO users(username, email, password_hash) VALUES($1, $2, $3)', [adminUser, adminEmail, hashed]);
+        await db.query('INSERT INTO users(username, email, password_hash, role) VALUES($1, $2, $3, $4)', [adminUser, adminEmail, hashed, 'admin']);
         console.log('Admin user created:', adminUser, adminEmail);
       }
     } else {

@@ -1,3 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Assessment - LB3 Emergency Preparedness</title>
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+  <style> .criteria-row { border-bottom:1px solid #eee; padding:10px 0; } </style>
+</head>
+<body class="p-4">
+  <div class="container" id="assessment-root" data-categories="<%= encodeURIComponent(JSON.stringify(categories || [])) %>">
+    <h3>LB3 Emergency Preparedness Assessment</h3>
+    <% if (error && error.length) { %>
+      <% error.forEach(function(msg){ %>
+        <div class="alert alert-danger"><%= msg %></div>
+      <% }) %>
+    <% } %>
+    <% if (success && success.length) { %>
+      <% success.forEach(function(msg){ %>
+        <div class="alert alert-success"><%= msg %></div>
+      <% }) %>
+    <% } %>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="categorySelect">Category</label>
+        <select id="categorySelect" class="form-control"></select>
+      </div>
+      <div class="col-md-4">
+        <label for="aspectSelect">Aspect</label>
+        <select id="aspectSelect" class="form-control"></select>
+      </div>
+    </div>
+
+    <form id="assessmentForm" action="/assessment/submit" method="post">
+      <div id="criteriaContainer"></div>
+      <div class="mt-3">
+        <button class="btn btn-primary" type="submit">Submit Assessment</button>
+          <a class="btn btn-secondary ms-2" href="/assessment/history">View History</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const categories = JSON.parse(decodeURIComponent(document.getElementById('assessment-root').dataset.categories || '[]'));
+    const catSelect = document.getElementById('categorySelect');
+    const aspectSelect = document.getElementById('aspectSelect');
+    const container = document.getElementById('criteriaContainer');
+
+    function buildCategoryOptions() {
+      catSelect.innerHTML = '';
+      categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id; opt.text = c.code + ' - ' + c.name;
+        catSelect.appendChild(opt);
+      });
+    }
+
+    function buildAspectOptions(categoryId) {
+      aspectSelect.innerHTML = '';
+      const cat = categories.find(c => c.id === parseInt(categoryId));
+      if (!cat) return;
+      cat.aspects.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id; opt.text = a.code + ' - ' + a.name;
+        aspectSelect.appendChild(opt);
+      });
+    }
+
+    function buildCriteria(aspectId) {
+      container.innerHTML = '';
+      const asp = categories.flatMap(c => c.aspects).find(a => a.id === parseInt(aspectId));
+      if (!asp) return;
+      asp.criteria.forEach(cr => {
+        const div = document.createElement('div');
+        div.className = 'criteria-row';
+        div.innerHTML = `
+          <div class="row">
+            <div class="col-md-6">
+              <strong>${cr.code}</strong> - ${cr.description}
+              <div class="text-muted small">${cr.explanation || ''} (Weight: ${cr.weight})</div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="answers[${cr.id}]" id="c${cr.id}_1" value="1">
+                <label class="form-check-label" for="c${cr.id}_1">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="answers[${cr.id}]" id="c${cr.id}_0" value="0" checked>
+                <label class="form-check-label" for="c${cr.id}_0">No</label>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    catSelect.addEventListener('change', (e) => {
+      buildAspectOptions(e.target.value);
+      const firstAspect = aspectSelect.options[0];
+      if (firstAspect) buildCriteria(firstAspect.value);
+    });
+    aspectSelect.addEventListener('change', (e) => buildCriteria(e.target.value));
+
+    // init
+    buildCategoryOptions();
+    if (catSelect.options.length) {
+      catSelect.selectedIndex = 0;
+      buildAspectOptions(catSelect.value);
+      if (aspectSelect.options.length) {
+        aspectSelect.selectedIndex = 0;
+        buildCriteria(aspectSelect.value);
+      }
+    }
+  </script>
+</body>
+</html>
 <%- include('partials/start') %>
     <div class="row">
 

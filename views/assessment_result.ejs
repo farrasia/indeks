@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Assessment Result</title>
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>Assessment Result</h3>
+    <p><a href="/assessment/history">Back to History</a> | <a href="/assessment">New Assessment</a></p>
+
+    <div class="mb-3">
+      <strong>Date:</strong> <%= new Date(assessment.created_at).toLocaleString() %>
+    </div>
+
+    <div class="mb-3">
+      <strong>Total Score:</strong> <%= totalScore %> / <%= totalPossible %>
+    </div>
+    <div class="mb-3">
+      <strong>Percentage:</strong> <%= pct %> %
+    </div>
+    <div class="mb-3">
+      <strong>Rating:</strong> <%= rating %>
+    </div>
+
+    <h5>Breakdown</h5>
+    <table class="table table-bordered">
+      <thead>
+        <tr><th>Aspect</th><th>Criteria</th><th>Explanation</th><th>Weight</th><th>Answer</th><th>Score</th></tr>
+      </thead>
+      <tbody>
+        <% answers.forEach(function(a){ %>
+          <tr>
+            <td><%= a.aspect_code %></td>
+            <td><%= a.criteria_code %> - <%= a.description %></td>
+            <td><%= a.explanation %></td>
+            <td><%= a.weight %></td>
+            <td><%= a.answer === 1 ? 'Yes' : 'No' %></td>
+            <td><%= a.score %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

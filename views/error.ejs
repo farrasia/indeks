@@ -1,3 +1,29 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<%- include('partials/header') %>
+
+<div class="error-wrapper">
+	<div class="error-card">
+		<div class="error-icon" aria-hidden="true">
+			<svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+				<path d="M11.001 7h2v6h-2zM11 15h2v2h-2z" fill="currentColor"/>
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM4 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8-8-3.582-8-8z" fill="currentColor"/>
+			</svg>
+		</div>
+
+		<div class="error-body">
+			<h1 class="error-title"><%= message || 'Something went wrong' %></h1>
+			<div class="error-status">Status: <%= error && error.status ? error.status : 500 %></div>
+			<p class="error-desc">We're sorry — the page encountered an unexpected error. You can return to the dashboard or try again later.</p>
+
+			<div class="mt-3 d-flex gap-2">
+				<a href="/" class="btn btn-home">Go Home</a>
+				<button class="btn btn-light" data-bs-toggle="collapse" data-bs-target="#stackTrace" aria-expanded="false">Show details</button>
+			</div>
+
+			<div class="collapse mt-3" id="stackTrace">
+				<pre class="error-stack"><%= (error && error.stack) ? error.stack : 'No stack available' %></pre>
+			</div>
+		</div>
+	</div>
+</div>
+
+<%- include('partials/footer') %>

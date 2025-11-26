@@ -6,3 +6,6 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
+
+-- ensure role column exists (default to 'user')
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user';

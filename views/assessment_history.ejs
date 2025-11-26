@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Assessment History</title>
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>Your Assessments</h3>
+    <p><a href="/assessment">Back to Assessment</a></p>
+    <table class="table table-striped">
+      <thead>
+        <tr><th>#</th><th>Date</th><th>Total Score</th><th>Percentage</th><th>Rating</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% if (!items.length) { %>
+          <tr><td colspan="6">No assessments found.</td></tr>
+        <% } %>
+        <% items.forEach(function(it){ %>
+          <tr>
+            <td><%= it.id %></td>
+            <td><%= new Date(it.created_at).toLocaleString() %></td>
+            <td><%= it.total %></td>
+            <td><%= it.pct %> %</td>
+            <td><%= it.rating %></td>
+            <td><a class="btn btn-sm btn-primary" href="/assessment/result/<%= it.id %>">View</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
